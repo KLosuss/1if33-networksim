@@ -3,7 +3,10 @@
 
 # TEAM
 
-    <name> -- <role> -- <twitter>
+    Nepomuk -- Programmer -- @flxwly
+    Kasper -- Programmer -- @CapCom
+    Kirill -- Programmer -- @KLosus
+
 
 # THANKS
 
