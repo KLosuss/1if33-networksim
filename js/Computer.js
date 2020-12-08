@@ -17,6 +17,9 @@ class Computer {
 
     // Enthält direkt angeschlossene Geräte
     this.connections = [];
+
+    // For routing
+    this.reachedFrom = undefined;
   }
 
   ping(ip) {
@@ -27,42 +30,45 @@ class Computer {
     console.log(this.ipv4.join(".") + " is receiving from: " + ip.join(".") + " message: " + message);
   }
 
-  send(target_ip, message, sender_ips = []) {
-    let bool = false;
+  send(target_ip, message) {
 
-    sender_ips.push(this.ipv4);
+    let routeIPs = [];
 
-    if (target_ip === this.ipv4) {
+    let q = [this];
+    let added = []
+    let end = undefined;
 
-      for (let i = 0; i < sender_ips.length - 1; i++) {
-        let p1 = createVector(0, 0);
-        for (const computer of computers) {
-          if (computer.ipv4 === sender_ips[i]) {
-            p1 = computer.pos;
-            break;
-          }
-        }
-        for (const computer of computers) {
-          if (computer.ipv4 === sender_ips[i + 1]) {
-            stroke(0, 255, 0);
-            line(p1.x, p1.y, computer.pos.x, computer.pos.y);
-            break;
-          }
-        }
-
-
-        sender_ips[0];
+    do {
+      if(q[0].ipv4 === target_ip) {
+        end = q[0];
+        end.receive(this.ipv4, message);
+        break;
       }
+      console.log("Checking: " + q[0].ipv4.join("."));
+      for (let connection of q[0].connections) {
+        if (!added.includes(connection)) {
+          q.push(connection);
+          connection.reachedFrom = q[0];
+          added.push(connection);
+        }
+      }
+      q = q.slice(1, q.length);
+    } while (q.length > 0);
 
-      this.receive(sender_ips[0], message);
-      return true;
+
+    let last = end;
+    while (end) {
+
+      stroke(0, 255, 0);
+      line(end.pos.x, end.pos.y, last.pos.x, last.pos.y);
+
+      last = end;
+      routeIPs.push(end.ipv4);
+      let temp = end.reachedFrom;
+      end.reachedFrom = undefined;
+      end = temp;
     }
 
-    for (let connection of this.connections) {
-      if (!sender_ips.includes(connection.ipv4)) {
-        bool = connection.send(target_ip, message, sender_ips);
-      }
-    }
-    return bool;
+    return routeIPs.length > 0;
   }
 }

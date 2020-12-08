@@ -1,7 +1,7 @@
 let macRegister = [];
 let computers = [];
 
-let computerNum = 10;
+let computerNum = 20;
 
 function setup() {
   let canvas = createCanvas(600, 600);
