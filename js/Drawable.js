@@ -25,14 +25,14 @@ class Enterable extends Clickable {
   constructor(x, y, w, h) {
     super(x, y, w, h);
 
-    this.objects = [];
+    this.lowerLayer = [];
     this.active = false;
   }
 
   setObjects(objects) {
-    this.objects = objects;
+    this.lowerLayer = objects;
     if (activeScene === this) {
-      for (const object of objects) {
+      for (const object of this.lowerLayer) {
         object.active = true;
       }
     }
@@ -54,7 +54,6 @@ class LayerObject extends Enterable {
     super(x, y, sprite.width, sprite.height);
 
     this.name = name;
-    this.lowerLayer = [];
     this.sprite = sprite;
   }
 
@@ -76,6 +75,7 @@ class WorldMap {
 
     for (let i = 0; i < townsNum; i++) {
       this.towns.push(new LayerObject(random(w), random(h), "town", townSprites));
+      this.towns[i].active = true;
 
       for (let j = 0; j < housesNum; j++) {
         this.towns[i].lowerLayer.push(new LayerObject(random(w), random(h), "House", houseSprites));
@@ -88,6 +88,9 @@ class WorldMap {
   }
 
   clicked(x, y) {
+
+    console.log("clicked at: " + x + " | " + y);
+
     for (let town of this.towns) {
       town.isClicked(x, y);
     }

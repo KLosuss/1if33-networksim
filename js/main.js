@@ -45,6 +45,9 @@ function draw() {
 }
 
 
+function mouseClicked() {
+  worldMap.clicked(mouseX, mouseY);
+}
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
