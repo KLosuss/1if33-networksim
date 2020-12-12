@@ -32,7 +32,7 @@ function preload() {
     computerSprites.push(loadImage("img/assets/computer" + i + ".png"));
   }
 
-  upButton = new Clickable(10, 10, loadImage("img/assets/up_button.png"));
+  upButton = loadImage("img/assets/up_button.png");
 }
 
 function setup() {
@@ -44,6 +44,8 @@ function setup() {
   activeScene = worldMap;
 
   canvas.resize(worldMap.dim.x, worldMap.dim.y);
+
+  upButton = new Clickable(10, 10, upButton);
 
 }
 
