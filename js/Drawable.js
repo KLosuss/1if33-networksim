@@ -62,7 +62,7 @@ class Enterable extends Clickable {
   }
 
   showInterior() {
-    return true;
+    image(this.interior, 0, 0);
   }
 
   showLayer() {
