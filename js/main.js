@@ -1,17 +1,24 @@
 let townSprites = [];
 let houseSprites = [];
 let computerSprites = [];
+let backgroundSprites = [];
 
+
+let activeScene = undefined;
 
 let worldMap = undefined;
-let activeScene = undefined;
+let upButton = undefined;
 
 function preload() {
 
+  let backgroundSpritesNum = 1;
   let townSpritesNum = 1;
   let houseSpritesNum = 1;
   let computerSpritesNum = 1;
 
+  for (let i = 0; i < backgroundSpritesNum; i++) {
+    backgroundSprites.push(loadImage("img/assets/background" + i + ".png"));
+  }
 
   for (let i = 0; i < townSpritesNum; i++) {
     townSprites.push(loadImage("img/assets/town" + i + ".png"));
@@ -24,15 +31,19 @@ function preload() {
   for (let i = 0; i < computerSpritesNum; i++) {
     computerSprites.push(loadImage("img/assets/computer" + i + ".png"));
   }
+
+  upButton = new Clickable(10, 10, loadImage("img/assets/up_button.png"));
 }
 
 function setup() {
-  let canvas = createCanvas(600, 600);
 
+  let canvas = createCanvas(0, 0);
   canvas.parent('sketch-holder');
 
-  worldMap = new WorldMap(600, 600);
+  worldMap = new WorldMap(4, 4, 4);
   activeScene = worldMap;
+
+  canvas.resize(worldMap.dim.x, worldMap.dim.y);
 
 }
 
@@ -40,15 +51,21 @@ function draw() {
 
   background(220);
 
+  activeScene.showInterior();
   activeScene.showLayer();
-
+  upButton.show();
 }
 
 
 function mouseClicked() {
-  worldMap.clicked(mouseX, mouseY);
-}
 
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+  for (let lowerObject of activeScene.lowerLayer) {
+    lowerObject.isClicked(mouseX, mouseY);
+  }
+
+  if (upButton.isClicked(mouseX, mouseY)) {
+    if (activeScene.parent) {
+      activeScene.parent.setActiveScene();
+    }
+  }
 }
