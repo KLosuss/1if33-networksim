@@ -1,9 +1,19 @@
-class Clickable {
+class Drawable {
   constructor(x, y, sprite) {
-
     this.pos = createVector(x, y);
     this.dim = createVector(sprite.width, sprite.height);
     this.sprite = sprite;
+  }
+
+  show() {
+    image(this.sprite, this.pos.x, this.pos.y);
+  }
+
+}
+
+class Clickable extends Drawable {
+  constructor(x, y, sprite) {
+    super(x, y, sprite);
   }
 
   isClicked(x, y) {
@@ -18,10 +28,6 @@ class Clickable {
 
   onClicked() {
     return true;
-  }
-
-  show() {
-    image(this.sprite, this.pos.x, this.pos.y);
   }
 
 }
@@ -69,19 +75,20 @@ class Enterable extends Clickable {
 class WorldMap extends Enterable {
   constructor(townsNum = 4, housesNum = 4, computersNum = 4) {
 
-    super(5, 5, undefined, "world", random(backgroundSprites), random(backgroundSprites));
+    super(5, 5, undefined, "world", random(worldBackgroundSprites), random(worldBackgroundSprites));
 
     for (let i = 0; i < townsNum; i++) {
+
       this.lowerLayer.push(new Enterable(random(this.dim.x), random(this.dim.y),
-        this, "town", random(townSprites), undefined));
+        this, "town", random(townSprites), random(townBackgroundSprites)));
 
       for (let j = 0; j < housesNum; j++) {
         this.lowerLayer[i].lowerLayer.push(new Enterable(random(this.dim.x), random(this.dim.y),
-          this.lowerLayer[i], "House", random(houseSprites), undefined));
+          this.lowerLayer[i], "House", random(houseSprites), random(houseBackgroundSprites)));
 
         for (let k = 0; k < computersNum; k++) {
           this.lowerLayer[i].lowerLayer[j].lowerLayer.push(new Enterable(random(this.dim.x), random(this.dim.y),
-            this.lowerLayer[i].lowerLayer[j], "Computer", random(computerSprites), undefined));
+            this.lowerLayer[i].lowerLayer[j], "Computer", random(computerSprites), random(computerBackgroundSprites)));
         }
       }
     }
