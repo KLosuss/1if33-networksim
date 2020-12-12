@@ -22,19 +22,28 @@ class Clickable {
 }
 
 class Enterable extends Clickable {
-  constructor(x, y, w, h) {
-    super(x, y, w, h);
+  constructor(x, y, name, sprites) {
+
+    let sprite = random(sprites);
+    super(x, y, sprite.width, sprite.height);
+
+    this.name = name;
+    this.sprite = sprite;
 
     this.lowerLayer = [];
     this.active = false;
+
   }
 
   setObjects(objects) {
     this.lowerLayer = objects;
+
     if (activeScene === this) {
+
       for (const object of this.lowerLayer) {
         object.active = true;
       }
+
     }
   }
 
@@ -42,25 +51,22 @@ class Enterable extends Clickable {
     if (this.active) {
       activeScene = this;
       this.active = false;
+
+      for (let lowerObject of this.lowerLayer) {
+        lowerObject.active = true;
+      }
+
       return true;
     }
     return false;
   }
-}
-
-class LayerObject extends Enterable {
-  constructor(x, y, name, sprites) {
-    let sprite = random(sprites);
-    super(x, y, sprite.width, sprite.height);
-
-    this.name = name;
-    this.sprite = sprite;
-  }
 
   showLayer() {
+
     for (let layerObject of this.lowerLayer) {
       layerObject.show();
     }
+
   }
 
   show() {
@@ -74,14 +80,14 @@ class WorldMap {
     this.dim = createVector(w, h);
 
     for (let i = 0; i < townsNum; i++) {
-      this.towns.push(new LayerObject(random(w), random(h), "town", townSprites));
+      this.towns.push(new Enterable(random(w), random(h), "town", townSprites));
       this.towns[i].active = true;
 
       for (let j = 0; j < housesNum; j++) {
-        this.towns[i].lowerLayer.push(new LayerObject(random(w), random(h), "House", houseSprites));
+        this.towns[i].lowerLayer.push(new Enterable(random(w), random(h), "House", houseSprites));
 
         for (let k = 0; k < computersNum; k++) {
-          this.towns[i].lowerLayer[j].lowerLayer.push(new LayerObject(random(w), random(h), "Computer", computerSprites));
+          this.towns[i].lowerLayer[j].lowerLayer.push(new Enterable(random(w), random(h), "Computer", computerSprites));
         }
       }
     }
