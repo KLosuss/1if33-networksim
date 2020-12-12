@@ -3,20 +3,18 @@ class Clickable {
     this.pos = createVector(x, y);
 
     this.dim = createVector(w, h);
+
   }
 
   isClicked(x, y) {
-    if (this.pos.x <= x < this.pos.x + this.dim.x &&
-      this.pos.y <= y < this.pos.y + this.dim.y) {
-      if (this.onClicked()) {
-        return true;
-      }
+    if (this.pos.x <= x && x <= this.pos.x + this.dim.x &&
+      this.pos.y <= y && y <= this.pos.y + this.dim.y) {
+      return this.onClicked();
     }
     return false;
   }
 
   onClicked() {
-    console.log("clicked: " + this.constructor.name);
     return true;
   }
 }
@@ -48,7 +46,10 @@ class Enterable extends Clickable {
   }
 
   onClicked() {
-    if (this.active) {
+
+    console.log(this.lowerLayer);
+
+    if (this.active && !this.lowerLayer.empty) {
       activeScene = this;
       this.active = false;
 
@@ -76,18 +77,18 @@ class Enterable extends Clickable {
 
 class WorldMap {
   constructor(w, h, townsNum = 4, housesNum = 4, computersNum = 4) {
-    this.towns = [];
+    this.lowerLayer = [];
     this.dim = createVector(w, h);
 
     for (let i = 0; i < townsNum; i++) {
-      this.towns.push(new Enterable(random(w), random(h), "town", townSprites));
-      this.towns[i].active = true;
+      this.lowerLayer.push(new Enterable(random(w), random(h), "town", townSprites));
+      this.lowerLayer[i].active = true;
 
       for (let j = 0; j < housesNum; j++) {
-        this.towns[i].lowerLayer.push(new Enterable(random(w), random(h), "House", houseSprites));
+        this.lowerLayer[i].lowerLayer.push(new Enterable(random(w), random(h), "House", houseSprites));
 
         for (let k = 0; k < computersNum; k++) {
-          this.towns[i].lowerLayer[j].lowerLayer.push(new Enterable(random(w), random(h), "Computer", computerSprites));
+          this.lowerLayer[i].lowerLayer[j].lowerLayer.push(new Enterable(random(w), random(h), "Computer", computerSprites));
         }
       }
     }
@@ -97,13 +98,13 @@ class WorldMap {
 
     console.log("clicked at: " + x + " | " + y);
 
-    for (let town of this.towns) {
-      town.isClicked(x, y);
+    for (let lowerObject of activeScene.lowerLayer) {
+      lowerObject.isClicked(x, y);
     }
   }
 
   showLayer() {
-    for (const town of this.towns) {
+    for (const town of this.lowerLayer) {
       town.show();
     }
   }
